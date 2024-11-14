@@ -1,0 +1,31 @@
+
+
+###
+POST  http://localhost:3000/api/users
+Content-Type: application/json
+
+{
+    "name": "Asqa1",
+    "email": "Asqa123451@gmail.com",
+    "password": "123456789bandung",
+    "confirmPassword": "123456789bandung"
+}
+
+###
+POST http://localhost:3000/api/users/login
+Content-Type: application/json
+
+{
+    "email": "Asqa123451@gmail.com",
+    "password": "123456789bandung"
+}
+
+###
+GET http://localhost:3000/api/users/current
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIyLCJuYW1lIjoiQXNxYTEiLCJlbWFpbCI6IkFzcWExMjM0NTFAZ21haWwuY29tIiwiaWF0IjoxNzMxNTYzMzM4LCJleHAiOjE3MzE1NjQ1Mzh9.Df_WfnCHlU1dQViY8dRbmdfDIJFmmZOJZCHyRvFOmVY
+###
+GET http://localhost:3000/api/users/token
+
+###
+DELETE  http://localhost:3000/api/users/logout
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIyLCJuYW1lIjoiQXNxYTEiLCJlbWFpbCI6IkFzcWExMjM0NTFAZ21haWwuY29tIiwiaWF0IjoxNzMxNTYzMzM4LCJleHAiOjE3MzE1NjQ1Mzh9.Df_WfnCHlU1dQViY8dRbmdfDIJFmmZOJZCHyRvFOmVY

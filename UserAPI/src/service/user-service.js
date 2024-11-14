@@ -140,7 +140,6 @@ const refreshToken = async (req) => {
     // Verifikasi token JWT
     const decoded = jwt.verify(cookieRefreshToken, process.env.REF_TOKEN_SECRET);
 
-
     // Cari token di database
     const refreshTokenEntry = await prismaClient.refreshToken.findUnique({
         where: {

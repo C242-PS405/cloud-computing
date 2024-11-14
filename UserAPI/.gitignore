@@ -1,6 +1,5 @@
-docs/
+
 node_modules/
 .env
-testConnection.js
-test/
-request.rest
+
+
