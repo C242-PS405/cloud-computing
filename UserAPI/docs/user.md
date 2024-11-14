@@ -1,14 +1,16 @@
 #User API Specification
 
 ## Register User API
+Endpoint : POST api/users
 Endpoint : POST api/users/register
 
 Request body:
 ```json 
 {
-    "username" : "username",
-    "password" : "password",
-    "name" : "name",
+    "name": "rama",
+    "email": "damada@gmail.com",
+    "password": "123456789",
+    "confirmPassword": "123456789"
 }
 ```
 
@@ -16,16 +18,16 @@ Respon body Successfully:
 ```json 
 {
     "data": {
-        "username" : "username",
-        "name" : "name",
-    }
+        "email": "damada@gmail.com",
+        "name": "rama"
+  }
 }
 ```
 
 Respon body Error:
 ```json 
 {
-    "error" : "Username already registered",
+    "error" : "Username already registered or comfirm password incorrect",
 }
 ```
 
@@ -35,7 +37,7 @@ Endpont : POST /api/user/login
 Request body:
 ```json 
 {
-    "username" : "username",
+    "email" : "email",
     "password" : "******",
 }
 ```
@@ -44,7 +46,9 @@ Respon body Successfully:
 ```json 
 {
     "data": {
-        "token" : "token",
+        "name" : "name",
+        "accessToken" : "token",
+        "refreshToken" : "refresh"
     }
 }
 ```
@@ -55,6 +59,7 @@ Respon body Error:
     "error" : "Username or password incorrect",
 }
 ```
+
 ## Update User API
 Endpont : PATCH /api/user/current
 

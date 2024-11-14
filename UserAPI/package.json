@@ -2,7 +2,7 @@
   "name": "userapi",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/main.js",
   "scripts": {
     "start": "node src/main.js",
     "test": "jest -i"
@@ -19,8 +19,13 @@
   "dependencies": {
     "@prisma/client": "^5.22.0",
     "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.7",
+    "crypto": "^1.0.1",
+    "dotenv": "^16.4.5",
     "express": "^4.21.1",
+    "express-rate-limit": "^7.4.1",
     "joi": "^17.13.3",
+    "jsonwebtoken": "^9.0.2",
     "uuid": "^11.0.2",
     "winston": "^3.16.0"
   },
