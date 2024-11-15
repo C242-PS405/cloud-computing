@@ -47,7 +47,6 @@ const update = async (req, res, next) => {
             data: result
         });
     } catch (e) {
-        console.error("Error in update controller:", e);
         next(e);
     }
 }

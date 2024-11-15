@@ -47,14 +47,15 @@ export const authMiddleware = async (req, res, next) => {
                 // Pilih field yang aman untuk di-attach ke request
                 id: true,
                 name: true,
-                email: true
+                email: true,
+                token: true
             }
         });
 
-        // Periksa apakah user ditemukan
-        if (!user) {
+        // Periksa apakah token di database sama dengan token yang dikirim
+        if (!user.token || user.token !== token) {
             return res.status(401).json({
-                errors: "Unauthorized: User not found"
+                errors: "Unauthorized: Invalid or expired token"
             });
         }
 

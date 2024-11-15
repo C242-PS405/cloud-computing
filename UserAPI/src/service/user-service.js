@@ -123,8 +123,6 @@ const update = async (req) => {
         }
     });
 
-    // console.log("Total users found:", totalUserInDatabase);
-
     if (totalUserInDatabase !== 1) {
         throw new ResponseError(404, "User is not found");
     }
