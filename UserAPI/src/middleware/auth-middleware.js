@@ -1,6 +1,5 @@
 import jwt from 'jsonwebtoken';
 import { prismaClient } from "../application/database.js";
-import rateLimit from 'express-rate-limit';
 import { config } from 'dotenv';
 config();
 
@@ -26,15 +25,9 @@ export const authMiddleware = async (req, res, next) => {
         // Verifikasi token
         let decoded;
         try {
-            decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+            decoded = jwt.verify(token, process.env.TOKEN_SECRET);
         } catch (error) {
             // Handle berbagai error token
-            if (error.name === 'TokenExpiredError') {
-                return res.status(401).json({ 
-                    errors: 'Token expired', 
-                    message: 'Refresh token needed' 
-                });
-            }
             if (error.name === 'JsonWebTokenError') {
                 return res.status(401).json({ 
                     errors: 'Invalid token' 
@@ -70,17 +63,8 @@ export const authMiddleware = async (req, res, next) => {
         next();
 
     } catch (error) {
-        // Tangani error yang tidak terduga
-        // console.error('Auth Middleware Error:', error);
         res.status(500).json({
             errors: "Internal Server Error"
         });
     }
 };
-
-export const refreshTokenRateLimiter = rateLimit({
-    // windowMs: 10 * 60 * 1000,
-    windowMs: parseInt(process.env.REFRESH_TOKEN_WINDOW_MS, 10),
-    max: 5, 
-    message: 'Terlalu banyak percobaan refresh token'
-});

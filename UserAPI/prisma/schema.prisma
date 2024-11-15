@@ -18,23 +18,13 @@ model User {
   name        String    @db.VarChar(100)
   email       String    @unique @db.VarChar(255)  
   password    String    @db.VarChar(100)
-  refreshTokens RefreshToken[]
+  token       String?   @db.VarChar(255)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
   @@map("users")
 }
 
-model RefreshToken {
-  id          Int       @id @default(autoincrement()) 
-  token       String    @unique @db.VarChar(255)
-  userId      Int       
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  expiresAt   DateTime 
-  createdAt   DateTime  @default(now())
-  
-  @@map("refresh_tokens")
-}
 
 
 

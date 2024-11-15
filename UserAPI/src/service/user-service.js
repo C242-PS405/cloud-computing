@@ -4,7 +4,6 @@ import { loginUserValidation, registerUserValidation, updateUserValidation, getU
 import { prismaClient } from "../application/database.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import crypto from "crypto";
 import { config } from 'dotenv';
 config();
 
@@ -69,44 +68,21 @@ const login = async (req) => {
         email: user.email
     };
 
-    // Menggunakan variabel lingkungan untuk waktu kedaluwarsa
-    const accessTokenExpiry = parseInt(process.env.ACCESS_TOKEN_EXPIRY); // Default 20 menit
-    const refreshTokenExpiry = parseInt(process.env.REF_TOKEN_EXPIRY); // Default 1 hari
+    const Token = jwt.sign(payload, process.env.TOKEN_SECRET);
 
-    const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
-        expiresIn: accessTokenExpiry
-    });
-    const refreshToken = jwt.sign(payload, process.env.REF_TOKEN_SECRET, {
-        expiresIn: refreshTokenExpiry
-    });
-
-    // Hitung waktu kedaluwarsa untuk refresh token
-    const expiresAt = new Date(Date.now() + refreshTokenExpiry * 1000);
-
-    await prismaClient.refreshToken.create({
+    return prismaClient.user.update({
         data: {
-            token: refreshToken,
-            userId: user.id,
-            expiresAt: expiresAt
+            token: Token,
+        },
+        where: {
+            id: user.id,
+            email: user.email
+        },
+        select: {
+            token: true,
+            name: true
         }
     });
-
-    return {
-        name: user.name,
-        accessToken: accessToken,
-        cookies: {
-            refreshToken: {
-                value: refreshToken,
-                options: {
-                    httpOnly: true,
-                    maxAge: refreshTokenExpiry * 1000,
-                    // secure: true, // aktifkan untuk https saja
-                    // sameSite: "none"
-                }
-            }
-        }
-
-    };
 }
 
 //getUser
@@ -130,142 +106,101 @@ const get = async (email) => {
     return user
 }
 
-
-const refreshToken = async (req) => {
-    const cookieRefreshToken = req.cookies?.refreshToken;
-
-    if (!cookieRefreshToken) {
-        throw new ResponseError(401, "No refresh token provided");
-    }
-    // Verifikasi token JWT
-    const decoded = jwt.verify(cookieRefreshToken, process.env.REF_TOKEN_SECRET);
-
-    // Cari token di database
-    const refreshTokenEntry = await prismaClient.refreshToken.findUnique({
-        where: {
-            token: cookieRefreshToken,
-            userId: decoded.userId
-        },
-        include: {
-            user: {
-                select: {
-                    id: true,
-                    name: true,
-                    email: true
-                }
-            }
-        }
-    });
-
-    // Validasi token di database
-    if (!refreshTokenEntry) {
-        throw new ResponseError(401, "Invalid refresh token");
-    }
-
-    // Periksa masa berlaku token
-    if (new Date() > refreshTokenEntry.expiresAt) {
-        // Hapus token yang expired
-        await prismaClient.refreshToken.delete({
-            where: {
-                id: refreshTokenEntry.id
-            }
-        });
-        throw new ResponseError(401, "Refresh token has expired");
-    }
-
-    // Validasi payload tambahan
-    if (!decoded.userId || decoded.userId !== refreshTokenEntry.userId) {
-        throw new ResponseError(401, "Invalid token payload");
-    }
-
-    // Generate ulang access token
-    const payload = {
-        userId: refreshTokenEntry.user.id,
-        name: refreshTokenEntry.user.name,
-        email: refreshTokenEntry.user.email
-    };
-
-    const accessTokenExpiry = parseInt(process.env.ACCESS_TOKEN_EXPIRY);
-
-    const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
-        expiresIn: accessTokenExpiry
-    });
-
-    return {
-        name: refreshTokenEntry.user.name,
-        accessToken: accessToken
-    };
-}
-
 const update = async (req) => {
     const user = validate(updateUserValidation, req);
 
+    if (!user.id) {
+        throw new ResponseError(400, "User ID is required");
+    }
+
+    if (!user.email) {
+        throw new ResponseError(400, "User Email is required");
+    }
+
     const totalUserInDatabase = await prismaClient.user.count({
         where: {
-            username: user.username
+            id: user.id,
         }
     });
 
+    console.log("Total users found:", totalUserInDatabase);
+
     if (totalUserInDatabase !== 1) {
         throw new ResponseError(404, "User is not found");
+    }
+
+    // Mencari pengguna untuk memverifikasi password
+    const existingUser = await prismaClient.user.findUnique({
+        where: {
+            id: user.id
+        }
+    });
+
+    // Memverifikasi currentPassword
+    const isPasswordValid = await bcrypt.compare(user.password, existingUser.password);
+    if (!isPasswordValid) {
+        throw new ResponseError(401, "Current password is incorrect");
+    }
+
+    // Perbaikan utama: Periksa email yang berbeda
+    if (user.email && user.email !== existingUser.email) {
+        const existingEmailUser = await prismaClient.user.findUnique({
+            where: { email: user.email }
+        });
+
+        if (existingEmailUser) {
+            throw new ResponseError(400, "Email already in use");
+        }
     }
 
     const data = {}
     if (user.name) {
         data.name = user.name
     }
-    if (user.password) {
-        data.password = await bcrypt.hash(user.password, 10);
+    if (user.email) {
+        data.email = user.email
+    }
+    if (user.newPassword) {
+        data.password = await bcrypt.hash(user.newPassword, 10);
     }
 
     return prismaClient.user.update({
         where: {
-            username: user.username
+            id: user.id
         },
         data: data,
         select: {
-            username: true,
-            name: true
+            id: true,
+            name: true,
+            email: true
         }
     })
 }
 
-const logout = async (id, cookieRefreshToken) => {
-    if (!cookieRefreshToken) {
-        throw new ResponseError(401, "No refresh token provided");
-    }
+const logout = async (id, email) => {
+    const emailValidation = validate(getUserValidation, email);
 
-    const refreshTokenEntry = await prismaClient.refreshToken.findUnique({
+    const user = await prismaClient.user.findUnique({
         where: {
-            token: cookieRefreshToken,
-            userId: id
+            id: id,
+            email: emailValidation.email
         },
-        include: {
-            user: {
-                select: {
-                    id: true,
-                    email: true
-                }
-            }
+        select: {
+            id: true,
+            email: true
         }
     });
 
-    // Validasi token di database
-    if (!refreshTokenEntry) {
-        throw new ResponseError(401, "Invalid refresh token");
+    if (!user) {
+        throw new ResponseError(404, "user is not found");
     }
 
-    // Hapus token dari pengguna
     return prismaClient.user.update({
         where: {
-            id: id // Menggunakan id pengguna
+            id: id 
         },
         data: {
-            refreshTokens: {
-                delete: {
-                    id: refreshTokenEntry.id // Menghapus refresh token yang sesuai
-                }
-            }
+            token: null
         },
         select: {
             email: true
@@ -279,5 +214,4 @@ export default {
     get,
     update,
     logout,
-    refreshToken
 }

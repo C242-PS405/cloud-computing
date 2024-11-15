@@ -15,23 +15,17 @@ const loginUserValidation = Joi.object({
 const getUserValidation = Joi.string().max(100).required();
 
 const updateUserValidation = Joi.object({
-    name: Joi.string().max(100).required(),
+    id: Joi.required(),
     email: Joi.string().email().optional(),
-    currentPassword: Joi.string().min(8).required(),
+    name: Joi.string().max(100).optional(),
+    password: Joi.string().min(8).required(),
     newPassword: Joi.string().min(8).optional(),
-    newPasswordConfirmation: Joi.ref('newPassword'),
-}).with('newPassword', 'newPasswordConfirmation');
-
-// const updateUser = async (req, res) => {
-//     const schema = Joi.object({
-//         email: Joi.string().email().optional(),
-//         currentPassword: Joi.string().min(8).required(),
-//         newPassword: Joi.string().min(8).optional(),
-//         newPasswordConfirmation: Joi.ref('newPassword'),
-//     }).with('newPassword', 'newPasswordConfirmation');
-
-
-
+    newPasswordConfirmation: Joi.string().optional().valid(Joi.ref('newPassword')).when('newPassword', {
+        is: Joi.exist(),
+        then: Joi.required(),
+        otherwise: Joi.forbidden()
+    })
+}).strict();
 
 export {
     loginUserValidation,

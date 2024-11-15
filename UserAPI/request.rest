@@ -1,12 +1,9 @@
-
-
-###
 POST  http://localhost:3000/api/users
 Content-Type: application/json
 
 {
-    "name": "Asqa1",
-    "email": "Asqa123451@gmail.com",
+    "name": "Pak Leader",
+    "email": "DaudPra@gmail.com",
     "password": "123456789bandung",
     "confirmPassword": "123456789bandung"
 }
@@ -16,16 +13,38 @@ POST http://localhost:3000/api/users/login
 Content-Type: application/json
 
 {
-    "email": "Asqa123451@gmail.com",
-    "password": "123456789bandung"
+    "password": "123456789bandung",
+    "email": "DaudPranowo@gmail.com"
 }
 
 ###
 GET http://localhost:3000/api/users/current
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIyLCJuYW1lIjoiQXNxYTEiLCJlbWFpbCI6IkFzcWExMjM0NTFAZ21haWwuY29tIiwiaWF0IjoxNzMxNTYzMzM4LCJleHAiOjE3MzE1NjQ1Mzh9.Df_WfnCHlU1dQViY8dRbmdfDIJFmmZOJZCHyRvFOmVY
-###
-GET http://localhost:3000/api/users/token
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsIm5hbWUiOiJQYWsgTGVhZGVyIiwiZW1haWwiOiJEYXVkUHJhQGdtYWlsLmNvbSIsImlhdCI6MTczMTYzODAxMH0.VhXwbd2l9fA2qbofTIBcbLFuNGLzkppXsaSk54al1Qo
 
 ###
 DELETE  http://localhost:3000/api/users/logout
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIyLCJuYW1lIjoiQXNxYTEiLCJlbWFpbCI6IkFzcWExMjM0NTFAZ21haWwuY29tIiwiaWF0IjoxNzMxNTYzMzM4LCJleHAiOjE3MzE1NjQ1Mzh9.Df_WfnCHlU1dQViY8dRbmdfDIJFmmZOJZCHyRvFOmVY
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsIm5hbWUiOiJQYWsgTGVhZGVyIiwiZW1haWwiOiJEYXVkUHJhbm93b0BnbWFpbC5jb20iLCJpYXQiOjE3MzE2MzkxNzZ9.s84toGDK37sT9EEBGZcRcbj4hC6tcvJd7TqJEH7GA5U
+
+###
+PATCH http://localhost:3000/api/users/current
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsIm5hbWUiOiJQYWsgTGVhZGVyIiwiZW1haWwiOiJEYXVkUHJhQGdtYWlsLmNvbSIsImlhdCI6MTczMTYzODAxMH0.VhXwbd2l9fA2qbofTIBcbLFuNGLzkppXsaSk54al1Qo
+
+{
+    "name": "Pak Leader",
+    "password": "123456789bandung",
+    "email": "DaudPranowo@gmail.com"
+}
+
+###
+PATCH http://localhost:3000/api/users/current
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsIm5hbWUiOiJQYWsgTGVhZGVyIiwiZW1haWwiOiJEYXVkUHJhQGdtYWlsLmNvbSIsImlhdCI6MTczMTYzODAxMH0.VhXwbd2l9fA2qbofTIBcbLFuNGLzkppXsaSk54al1Qo
+
+{
+    "password": "123456789bandung11",
+    "name": "Pak Leader",
+    "email": "DaudPranowo@gmail.com",
+    "newPassword": "123456789bandung",
+    "newPasswordConfirmation": "123456789bandung"
+}

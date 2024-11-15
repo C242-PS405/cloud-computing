@@ -1,5 +1,18 @@
-
+# Node modules directory
 node_modules/
+
+# Environment variable files
 .env
+.env.sample
 
+# Documentation
+docs/
 
+# Test files
+testConnection.js
+test/
+request.rest
+
+# Temporary or sample configuration files
+app.yaml
+app.yaml.sample
