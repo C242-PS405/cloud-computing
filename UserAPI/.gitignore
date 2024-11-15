@@ -10,9 +10,15 @@ docs/
 
 # Test files
 testConnection.js
-test/
 request.rest
+test/
 
 # Temporary or sample configuration files
 app.yaml
 app.yaml.sample
+
+
+UserAPI/test/
+UserAPI/docs/
+UserAPI/request.rest
+UserAPI/testConnection.js
