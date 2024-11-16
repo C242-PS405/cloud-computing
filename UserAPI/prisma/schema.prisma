@@ -21,10 +21,22 @@ model User {
   token       String?   @db.VarChar(255)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+  logs      LogActivity[]
 
   @@map("users")
 }
 
+model LogActivity {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  siteName  String
+  status    String   // Contoh: "Detected", "Blocked"
+  timestamp DateTime @default(now())
+  
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@map("logActivity")
+}
 
 
 
