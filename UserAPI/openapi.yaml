@@ -1,0 +1,368 @@
+openapi: 3.1.0
+info:
+  title: User Management API
+  version: 1.0.0
+  description: API for user authentication, profile management, and history
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+tags:
+  - name: Public
+    description: Endpoints untuk autentikasi publik
+  - name: User
+    description: Endpoint manajemen profil pengguna
+  - name: History
+    description: Endpoint untuk melihat riwayat terdeteksi judol
+  - name: Scraper
+    description: Endpoint untuk scraping dan analisis URL
+paths:
+  /api/users/register:
+    post:
+      summary: User Registration
+      tags:
+        - Public
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  minLength: 3
+                  maxLength: 100
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  minLength: 8
+                  pattern: >-
+                    ^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])?[A-Za-z\d@$!%*?&]{8,}$
+                confirmPassword:
+                  type: string
+              required:
+                - name
+                - email
+                - password
+                - confirmPassword
+      responses:
+        '200':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  email:
+                    type: string
+                    format: email
+                  name:
+                    type: string
+        '400':
+          description: Bad request or user already registered
+          
+  /api/users/login:
+    post:
+      summary: User Login
+      tags:
+        - Public
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+              required:
+                - email
+                - password
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                  token:
+                    type: string
+        '401':
+          description: Unauthorized
+          
+  /api/users/profile:
+    get:
+      summary: Get User Profile
+      tags:
+        - User
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  email:
+                    type: string
+                    format: email
+                  name:
+                    type: string
+                  profilePic:
+                    type: string
+                  createdAt:
+                    type: string
+        '401':
+          description: Unauthorized
+          
+  /api/users/update:
+    patch:
+      summary: Update User Profile
+      tags:
+        - User
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  description: Current password for verification
+                newPassword:
+                  type: string
+                newPasswordConfirmation:
+                  type: string
+        responses:
+          '200':
+            description: Profile updated successfully
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    email:
+                      type: string
+                      format: email
+                    name:
+                      type: string
+                    updatedAt:
+                      type: string
+          '400':
+            description: Bad request
+          '401':
+            description: Unauthorized
+            
+  /api/users/profile-picture:
+    post:
+      summary: Update Profile Picture
+      tags:
+        - User
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                profilePicture:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Profile picture updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                  profilePic:
+                    type: string
+                    format: uri
+        '403':
+          description: Profile picture update restricted
+          
+  /api/users/logout:
+    delete:
+      summary: User Logout
+      tags:
+        - User
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Logged out successfully
+        '401':
+          description: Unauthorized
+          
+  /api/logs/{id}:
+    get:
+      summary: Get User Activity Logs
+      tags:
+        - History
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: false
+          schema:
+            type: integer
+            nullable: true
+          description: Optional user ID for specific logs
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Logs retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    siteName:
+                      type: string
+                    status:
+                      type: string
+                    timestamp:
+                      type: string
+        '403':
+          description: Unauthorized access
+          
+  /api/scraper:
+    post:
+      summary: Scrape URL dan analisis konten
+      tags:
+        - Scraper
+      security:
+        - bearerAuth: []  # Gunakan auth middleware
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url:
+                  type: string
+                  format: uri
+                  description: URL yang akan di-scrape
+              required:
+                - url
+      responses:
+        '200':
+          description: Analisis URL berhasil
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: URL analysis completed successfully
+                  data:
+                    type: object
+                    properties:
+                      prediction:
+                        type: string
+                        example: "Judi Online"
+                      isJudol:
+                        type: boolean
+                        example: true
+                      url:
+                        type: string
+                        example: "http://example.com"
+        '400':
+          description: Permintaan tidak valid, URL diperlukan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: URL is required
+        '403':
+          description: Konten terlarang, terdeteksi sebagai Judi Online
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Content is categorized as Judi Online
+        '404':
+          description: Tidak ada konten ditemukan untuk URL yang diberikan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: No content found for the given URL
+        '500':
+          description: Terjadi kesalahan saat memproses permintaan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Prediction failed
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

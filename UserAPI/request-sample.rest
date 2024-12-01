@@ -1,0 +1,75 @@
+### Variables
+@baseUrl = http://localhost:8080
+@token = YOUR_ACCESS_TOKEN
+
+### Register User
+POST {{baseUrl}}/api/users/register
+Content-Type: application/json
+
+{
+    "name": "John Doe",
+    "email": "john@example.com",
+    "password": "password123",
+    "confirmPassword": "password123"
+}
+
+
+### Login User
+POST {{baseUrl}}/api/users/login
+Content-Type: application/json
+
+{
+    "email": "john@example.com",
+    "password": "password123"
+}
+
+
+### Get User Profile
+GET {{baseUrl}}/api/users/profile
+Authorization: Bearer {{token}}
+
+
+### Update User Profile
+PATCH {{baseUrl}}/api/users/update
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "name": "John Updated",
+    "email": "john.updated@example.com",
+    "password": "oldpassword123",
+    "newPassword": "newpassword456",
+    "newPasswordConfirmation": "newpassword456"
+}
+
+
+### Get History Judol
+GET {{baseUrl}}/api/logs/2
+Authorization: Bearer {{token}}
+
+
+### Scraper
+POST {{baseUrl}}/api/scraper
+Authorization: Bearer {{token}}
+
+{
+    "url": "ads.koko88.best"
+}
+
+
+### Upload Profile Picture
+POST {{baseUrl}}/api/users/profile-picture
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data
+
+--WebAppBoundary
+Content-Disposition: form-data; name="profilePicture"; filename="profile.jpg"
+Content-Type: image/jpeg
+
+< /path/to/your/profile.jpg
+--WebAppBoundary--
+
+
+### Logout User
+DELETE {{baseUrl}}/api/users/logout
+Authorization: Bearer {{token}}

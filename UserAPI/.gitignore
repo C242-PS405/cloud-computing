@@ -1,9 +1,12 @@
 # Node modules directory
 node_modules/
-
+prisma/migrations
+.gitignore
+.gcloudignore
 # Environment variable files
 .env
 .env.sample
+service-account-key.json
 
 # Documentation
 docs/
@@ -22,3 +25,5 @@ UserAPI/test/
 UserAPI/docs/
 UserAPI/request.rest
 UserAPI/testConnection.js
+
+

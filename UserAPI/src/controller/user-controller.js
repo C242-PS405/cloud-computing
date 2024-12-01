@@ -4,6 +4,7 @@ const register = async (req, res, next) => {
     try {
         const result = await userService.register(req.body);
         res.status(201).json({
+            message: "User  registered successfully",
             data: result
         });
     } catch (e) {
@@ -15,6 +16,7 @@ const login = async (req, res, next) => {
     try {
         const result = await userService.login(req.body);
         res.status(200).json({
+            message: "Login successful",
             data: result
         })
     } catch (e) {
@@ -27,6 +29,7 @@ const get = async (req, res, next) => {
         const email = req.user.email;
         const result = await userService.get(email);
         res.status(200).json({
+            message: "User  data retrieved successfully",
             data: result
         });
     } catch (e) {
@@ -44,6 +47,7 @@ const update = async (req, res, next) => {
 
         const result = await userService.update(request);
         res.status(200).json({
+            message: "User  data updated successfully",
             data: result
         });
     } catch (e) {
@@ -58,7 +62,7 @@ const logout = async (req, res, next) => {
 
         await userService.logout(userId, email);       
         res.status(200).json({
-            data: "OK"
+            message: "Logout successful",
         });
     } catch (e) {
         next(e);

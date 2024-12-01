@@ -79,8 +79,9 @@ const login = async (req) => {
             email: user.email
         },
         select: {
-            token: true,
-            name: true
+            id: true,
+            name: true,
+            token: true
         }
     });
 }
@@ -95,7 +96,9 @@ const get = async (email) => {
         select: {
             id: true,
             email: true,
-            name: true
+            name: true,
+            profilePic: true,
+            createdAt: true
         }
     })
 
@@ -111,10 +114,6 @@ const update = async (req) => {
 
     if (!user.id) {
         throw new ResponseError(400, "User ID is required");
-    }
-
-    if (!user.email) {
-        throw new ResponseError(400, "User Email is required");
     }
 
     const totalUserInDatabase = await prismaClient.user.count({
@@ -134,10 +133,12 @@ const update = async (req) => {
         }
     });
 
-    // Memverifikasi currentPassword
-    const isPasswordValid = await bcrypt.compare(user.password, existingUser.password);
-    if (!isPasswordValid) {
-        throw new ResponseError(401, "Current password is incorrect");
+    // Memverifikasi currentPassword jika ada
+    if (user.password) {
+        const isPasswordValid = await bcrypt.compare(user.password, existingUser.password);
+        if (!isPasswordValid) {
+            throw new ResponseError(401, "Current password is incorrect");
+        }
     }
 
     // Perbaikan utama: Periksa email yang berbeda
@@ -170,7 +171,8 @@ const update = async (req) => {
         select: {
             id: true,
             name: true,
-            email: true
+            email: true,
+            updatedAt: true
         }
     })
 }
@@ -195,7 +197,7 @@ const logout = async (id, email) => {
 
     return prismaClient.user.update({
         where: {
-            id: id 
+            id: id
         },
         data: {
             token: null

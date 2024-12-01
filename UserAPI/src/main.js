@@ -1,6 +1,8 @@
 import { app } from "./application/app.js";
 import { logger } from "./application/logging.js";
 
-app.listen(3000, () => {
-    logger.info("Server started on port 3000");
-})
+const PORT = process.env.PORT || 8080;
+
+app.listen(PORT, () => {
+    logger.info(`Server started on port ${PORT}`);
+});

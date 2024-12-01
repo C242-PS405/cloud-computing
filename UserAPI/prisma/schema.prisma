@@ -19,9 +19,11 @@ model User {
   email       String    @unique @db.VarChar(255)  
   password    String    @db.VarChar(100)
   token       String?   @db.VarChar(255)
+  profilePic  String?   @db.VarChar(255)
+  lastProfileUpdate DateTime?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  logs      LogActivity[]
+  logs        LogActivity[]
 
   @@map("users")
 }

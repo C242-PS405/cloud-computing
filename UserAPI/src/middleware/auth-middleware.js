@@ -7,7 +7,6 @@ config();
 export const authMiddleware = async (req, res, next) => {
 
     try {
-        // Ambil token dari header Authorization
         const authHeader = req.get('Authorization');
         
         // Periksa apakah token ada
@@ -41,7 +40,7 @@ export const authMiddleware = async (req, res, next) => {
         // Cari user berdasarkan ID dari token
         const user = await prismaClient.user.findUnique({
             where: {
-                id: decoded.userId // Sesuaikan dengan struktur payload
+                id: decoded.userId 
             },
             select: {
                 // Pilih field yang aman untuk di-attach ke request
