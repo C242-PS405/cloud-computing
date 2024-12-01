@@ -2,7 +2,7 @@
 
 
 # C242-PS405 - BackEnd API
-Backend API untuk proyek capstone C242-PS405 adalah solusi komprehensif yang dikembangkan menggunakan Node.js, Express, Prisma ORM, dan terintegrasi dengan Google Cloud Platform untuk manajemen autentikasi, penyimpanan, dan komputasi. API ini menyediakan layanan utama seperti otentikasi pengguna (registrasi, login, manajemen token), manajemen profil, penyimpanan data MySQL, integrasi layanan cloud, validasi data melalui middleware khusus, dan endpoint API yang aman. Menggunakan teknologi JavaScript (Node.js), Express.js, Prisma, JWT, Cloud SQL (MySQL), Cloud Storage, dan dideploy di Google Cloud Platform (Cloud Run atau App Engine).
+Backend API untuk proyek capstone C242-PS405 adalah solusi komprehensif yang dikembangkan menggunakan Node.js, Express, Prisma ORM, dan terintegrasi dengan Google Cloud Platform untuk manajemen autentikasi, penyimpanan, dan komputasi. API ini menyediakan layanan utama seperti otentikasi pengguna (registrasi, login, manajemen token), manajemen profil, penyimpanan data MySQL, integrasi layanan cloud, validasi data melalui middleware, dan endpoint API yang aman. Menggunakan teknologi JavaScript (Node.js), Express.js, Prisma, JWT, MySQL, dan dideploy di Google Cloud Platform.
 
 ## Getting Started 🚀
 - **Kloning Repositori**:
@@ -78,6 +78,9 @@ USERAPI/
 │   ├── route/
 │   │   ├── public-api.js
 │   │   └── user-api.js
+│   ├── utils/
+│   │   ├── user-agent-list.json
+│   │   └── user-agent.js
 │   └── main.js
 │
 ├── .env.example
