@@ -13,8 +13,8 @@ tags:
     description: Endpoint manajemen profil pengguna
   - name: History
     description: Endpoint untuk melihat riwayat terdeteksi judol
-  - name: Scraper
-    description: Endpoint untuk scraping dan analisis URL
+  - name: Predictions
+    description: Endpoint untuk scraping dan analisis
 paths:
   /api/users/register:
     post:
@@ -48,7 +48,7 @@ paths:
                 - password
                 - confirmPassword
       responses:
-        '200':
+        "200":
           description: User registered successfully
           content:
             application/json:
@@ -60,9 +60,9 @@ paths:
                     format: email
                   name:
                     type: string
-        '400':
+        "400":
           description: Bad request or user already registered
-          
+
   /api/users/login:
     post:
       summary: User Login
@@ -84,7 +84,7 @@ paths:
                 - email
                 - password
       responses:
-        '200':
+        "200":
           description: Login successful
           content:
             application/json:
@@ -97,9 +97,9 @@ paths:
                     type: string
                   token:
                     type: string
-        '401':
+        "401":
           description: Unauthorized
-          
+
   /api/users/profile:
     get:
       summary: Get User Profile
@@ -108,7 +108,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        '200':
+        "200":
           description: User profile retrieved successfully
           content:
             application/json:
@@ -126,9 +126,10 @@ paths:
                     type: string
                   createdAt:
                     type: string
-        '401':
+        "401":
           description: Unauthorized
-          
+
+  paths:
   /api/users/update:
     patch:
       summary: Update User Profile
@@ -145,38 +146,60 @@ paths:
               properties:
                 name:
                   type: string
+                  description: New name for the user
                 email:
                   type: string
                   format: email
+                  description: New email address
                 password:
                   type: string
                   description: Current password for verification
                 newPassword:
                   type: string
+                  description: New password (optional)
+                  minLength: 8
                 newPasswordConfirmation:
                   type: string
-        responses:
-          '200':
-            description: Profile updated successfully
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                    email:
-                      type: string
-                      format: email
-                    name:
-                      type: string
-                    updatedAt:
-                      type: string
-          '400':
-            description: Bad request
-          '401':
-            description: Unauthorized
-            
+                  description: Confirmation of new password
+      responses:
+        '200':
+          description: Profile updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  email:
+                    type: string
+                    format: email
+                  name:
+                    type: string
+                  updatedAt:
+                    type: string
+                    format: date-time
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Validation error or invalid input"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid authentication credentials"
+
   /api/users/profile-picture:
     post:
       summary: Update Profile Picture
@@ -195,7 +218,7 @@ paths:
                   type: string
                   format: binary
       responses:
-        '200':
+        "200":
           description: Profile picture updated successfully
           content:
             application/json:
@@ -209,9 +232,9 @@ paths:
                   profilePic:
                     type: string
                     format: uri
-        '403':
+        "403":
           description: Profile picture update restricted
-          
+
   /api/users/logout:
     delete:
       summary: User Logout
@@ -220,11 +243,11 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        '200':
+        "200":
           description: Logged out successfully
-        '401':
+        "401":
           description: Unauthorized
-          
+
   /api/logs/{id}:
     get:
       summary: Get User Activity Logs
@@ -251,7 +274,7 @@ paths:
             type: integer
             default: 10
       responses:
-        '200':
+        "200":
           description: Logs retrieved successfully
           content:
             application/json:
@@ -268,16 +291,16 @@ paths:
                       type: string
                     timestamp:
                       type: string
-        '403':
+        "403":
           description: Unauthorized access
-          
-  /api/scraper:
+
+  /api/checkurl:
     post:
       summary: Scrape URL dan analisis konten
       tags:
-        - Scraper
+        - Predictions
       security:
-        - bearerAuth: []  # Gunakan auth middleware
+        - bearerAuth: [] # Gunakan auth middleware
       requestBody:
         required: true
         content:
@@ -292,7 +315,7 @@ paths:
               required:
                 - url
       responses:
-        '200':
+        "200":
           description: Analisis URL berhasil
           content:
             application/json:
@@ -320,7 +343,7 @@ paths:
                       url:
                         type: string
                         example: "http://example.com"
-        '400':
+        "400":
           description: Permintaan tidak valid, URL diperlukan
           content:
             application/json:
@@ -330,7 +353,7 @@ paths:
                   error:
                     type: string
                     example: URL is required
-        '403':
+        "403":
           description: Konten terlarang, terdeteksi sebagai Judi Online
           content:
             application/json:
@@ -340,7 +363,7 @@ paths:
                   error:
                     type: string
                     example: Content is categorized as Judi Online
-        '404':
+        "404":
           description: Tidak ada konten ditemukan untuk URL yang diberikan
           content:
             application/json:
@@ -350,7 +373,7 @@ paths:
                   error:
                     type: string
                     example: No content found for the given URL
-        '500':
+        "500":
           description: Terjadi kesalahan saat memproses permintaan
           content:
             application/json:
@@ -360,6 +383,56 @@ paths:
                   error:
                     type: string
                     example: Prediction failed
+
+  api/predict:
+    post:
+      summary: Predict text content classification
+      tags:
+        - Predictions
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              ref: '#/components/schemas/PredictRequest'
+            examples:
+              gamblingText:
+                value:
+                  text: "Dapatkan bonus besar-besaran di sini!"
+              normalText:
+                value:
+                  text: "Selamat pagi, semoga harimu menyenangkan!"
+
+      responses:
+        '200':
+          description: Successful text prediction
+          content:
+            application/json:
+              schema:
+                ref: '#/components/schemas/PredictResponse'
+              examples:
+                gamblingResult:
+                  value:
+                    status: "success"
+                    statusCode: 200
+                    message: "Text analysis completed successfully"
+                    data:
+                      prediction: "Judi Online"
+                      isGambling: true
+                      probability: 0.85
+                      details:
+                        originalText: "Dapatkan bonus besar-besaran di sini!"
+                        userId: "user123"
+
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                ref: '#/components/schemas/ErrorResponse'
+
 components:
   securitySchemes:
     bearerAuth:

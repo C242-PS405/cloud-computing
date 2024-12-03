@@ -49,11 +49,21 @@ Authorization: Bearer {{token}}
 
 
 ### Scraper
-POST {{baseUrl}}/api/scraper
+POST {{baseUrl}}/api/checkurl
 Authorization: Bearer {{token}}
 
 {
     "url": "ads.koko88.best"
+}
+
+
+### Predictions
+POST {{baseUrl}}/api/predict
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "text": "",
 }
 
 
