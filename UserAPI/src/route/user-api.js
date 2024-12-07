@@ -15,6 +15,6 @@ userRoute.delete('/api/users/logout', userController.logout);
 userRoute.get('/api/logs/:id?', historyController.getLogs);
 userRoute.post('/api/users/profile-picture', upload.single('profilePicture'), profileController.updateProfilePicture);
 userRoute.post('/api/checkurl', scraperController.scraper);
-userRoute.post('/api/predict', predictController.predict);
+userRoute.post('/api/ckecksms', predictController.predict);
 
 export { userRoute };

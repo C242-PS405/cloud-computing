@@ -384,7 +384,7 @@ paths:
                     type: string
                     example: Prediction failed
 
-  api/predict:
+  /api/ckecksms:
     post:
       summary: Predict text content classification
       tags:

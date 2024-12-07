@@ -57,8 +57,8 @@ Authorization: Bearer {{token}}
 }
 
 
-### Predictions
-POST {{baseUrl}}/api/predict
+### Prediction
+POST {{baseUrl}}/api/ckecksms
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
