@@ -80,6 +80,7 @@ const login = async (req) => {
         },
         select: {
             id: true,
+            email: true,
             name: true,
             token: true
         }
