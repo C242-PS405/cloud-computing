@@ -8,7 +8,7 @@ import { URL } from "url";
 import { config } from "dotenv";
 config();
 
-const predictApiUrl = process.env.PREDICT_API_URL;
+const predictApiUrl = process.env.PREDICT_URL_API_URL;
 
 const validateAndFormatUrl = (url) => {
     try {

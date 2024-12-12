@@ -3,7 +3,7 @@ import axios from "axios";
 import { config } from "dotenv";
 config();
 
-const predictApiUrl = process.env.PREDICT_API_URL;
+const predictApiUrl = process.env.PREDICT_SMS_API_URL;
 
 const predictContent = async (text) => {
     try {
